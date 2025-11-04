@@ -33,7 +33,7 @@ build/
 .env
 .env.*
 *.local
-application-local.yml
+application-example.yml
 
 # -------------------------------
 # Build and IDE Artifacts

@@ -1,8 +1,11 @@
+server:
+  port: 8080
+
 spring:
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/portfolio_db}
-    username: ${DB_USER:postgres}
-    password: ${DB_PASS:postgres}
+    url: jdbc:postgresql://localhost:5432/portfolio_db
+    username: postgres
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -30,10 +33,7 @@ spring:
     livereload:
       enabled: true
 
-server:
-  port: ${SERVER_PORT:8080}
-  error:
-    include-message: always
+
 
 jwt:
   secret: ${JWT_SECRET:my-dev-secret}
@@ -60,3 +60,11 @@ logging:
     com.hkb.portfolio_backend: INFO
     org.springframework.web: INFO
     org.hibernate.SQL: WARN
+
+app:
+  allowed-origins:
+    - http://localhost:4200
+    - https://yourfrontenddomain.com
+  jwt:
+    secret: ${JWT_SECRET:HemanthPortfolioSecretKeySpringBoot2025Secure}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}

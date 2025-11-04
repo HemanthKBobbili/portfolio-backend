@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tasks")
 @CrossOrigin(origins = "http://localhost:4200")
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class TaskController {
 
     @Autowired

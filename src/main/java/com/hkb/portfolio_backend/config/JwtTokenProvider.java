@@ -2,78 +2,83 @@ package com.hkb.portfolio_backend.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")  // From yml
-    private String jwtSecret;
+    private final AppProperties appProperties;
 
-    @Value("${jwt.expiration:3600000}")  // 1 hour default
-    private long jwtExpiration;
-
-    private Key key;
-
-    @PostConstruct
-    public void init() {
-        key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    public JwtTokenProvider(AppProperties appProperties) {
+        this.appProperties = appProperties;
     }
 
-    // Generate token from Authentication
+    /**
+     * Generate JWT token based on authenticated user
+     */
     public String generateToken(Authentication authentication) {
-        final String username = authentication.getName();
-        final List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        String username = authentication.getName();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + getExpirationMs());
 
         return Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roles)  // Embed roles
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Get Authentication from token
-    public Authentication getAuthentication(String token) {
+    /**
+     * Extract username from token
+     */
+    public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
-        final UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                claims.getSubject(), "", getAuthorities(claims.get("roles", List.class)));
-
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return claims.getSubject();
     }
 
-    // Validate token
+    /**
+     * Validate token integrity and expiration
+     */
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+        } catch (MalformedJwtException ex) {
+            System.out.println("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            System.out.println("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            System.out.println("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            System.out.println("JWT claims string is empty");
         }
+        return false;
     }
 
-    // Extract roles from claims
-    private List<GrantedAuthority> getAuthorities(List<String> roles) {
-        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    /**
+     * Retrieve secure signing key
+     */
+    private Key getSigningKey() {
+        return Keys.hmacShaKeyFor(getSecret().getBytes());
+    }
+
+    private String getSecret() {
+        return appProperties.getJwt().getSecret();
+    }
+
+    private long getExpirationMs() {
+        return appProperties.getJwt().getExpirationMs();
     }
 }

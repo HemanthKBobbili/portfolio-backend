@@ -7,21 +7,25 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocketMessageBroker  // Enables WebSocket with STOMP
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final AppProperties appProperties;
+
+    public WebSocketConfig(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic");  // Prefix for broadcasting (e.g., /topic/chat/general)
-        config.setApplicationDestinationPrefixes("/app");  // Prefix for sending (e.g., /app/chat/general/sendMessage)
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
     }
-
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("*")  // Allow all origins (for testing)
-                .withSockJS();  // Enable SockJS for browser fallback
+                .setAllowedOrigins(appProperties.getAllowedOrigins().toArray(new String[0]))
+                .withSockJS();
     }
-
 }

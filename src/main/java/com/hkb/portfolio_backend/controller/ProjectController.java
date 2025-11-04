@@ -5,12 +5,14 @@ import com.hkb.portfolio_backend.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController  // JSON responses
 @RequestMapping("/api/projects")  // Base path
 @CrossOrigin(origins = "http://localhost:4200")  // For future frontend
+@PreAuthorize("hasAnyRole('USER','ADMIN')")
 public class ProjectController {
 
     @Autowired
@@ -45,6 +47,7 @@ public class ProjectController {
     }
 
     // DELETE /api/projects/{id}
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
