@@ -6,9 +6,7 @@ target/
 
 ### STS ###
 .apt_generated
-.classpath
 .factorypath
-.project
 .settings
 .springBeans
 .sts4-cache
@@ -16,7 +14,6 @@ target/
 ### IntelliJ IDEA ###
 .idea
 *.iws
-*.iml
 *.ipr
 
 ### NetBeans ###
@@ -29,5 +26,72 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+
+# -------------------------------
+# Environment & Local Config
+# -------------------------------
+.env
+.env.*
+*.local
+application-local.yml
+
+# -------------------------------
+# Build and IDE Artifacts
+# -------------------------------
+/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+**/build/
+out/
+
+# -------------------------------
+# IntelliJ / Eclipse / VSCode
+# -------------------------------
+.idea/
+*.iml
+.classpath
+.project
+.settings/
 .vscode/
+bin/
+
+# -------------------------------
+# 📜 Logs & Temporary Files
+# -------------------------------
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# -------------------------------
+# 🧪 Testing & Reports
+# -------------------------------
+/test-output/
+/surefire-reports/
+/jacoco.exec
+/coverage/
+reports/
+
+# -------------------------------
+# 🧮 OS-specific Files
+# -------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------------------------------
+# 🧩 Dependency & Cache Files
+# -------------------------------
+/node_modules/
+/.npm/
+/.gradle/
+/.cache/
+/.apt_generated/
+/.mvn/
+
+# -------------------------------
+# 🔄 Git Itself
+# -------------------------------
+.gitignore
