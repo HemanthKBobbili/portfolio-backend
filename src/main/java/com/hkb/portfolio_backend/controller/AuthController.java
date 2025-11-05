@@ -5,6 +5,7 @@ import com.hkb.portfolio_backend.dto.LoginDto;
 import com.hkb.portfolio_backend.dto.RegisterDto;
 import com.hkb.portfolio_backend.entity.User;
 import com.hkb.portfolio_backend.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,7 +34,7 @@ public class AuthController {
 
     // POST /api/auth/register
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterDto registerDto) {
         if (userRepository.findByUsername(registerDto.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username exists");
         }
@@ -54,7 +55,7 @@ public class AuthController {
 
     // POST /api/auth/login
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword())
         );

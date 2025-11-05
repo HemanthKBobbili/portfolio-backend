@@ -57,13 +57,10 @@ public class ExpenseController {
 
     @PostMapping("/import")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<String> importExpenses(@RequestParam("file") MultipartFile file, Authentication auth) {
-        try {
-            Long userId = getUserIdFromAuth(auth);
-            String result = expenseService.importExpensesFromCsv(file, userId);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Import failed: " + e.getMessage());
-        }
+    public ResponseEntity<String> importExpenses(@RequestParam("file") MultipartFile file, Authentication auth) throws Exception {
+        Long userId = getUserIdFromAuth(auth);
+        String result = expenseService.importExpensesFromCsv(file, userId);
+        return ResponseEntity.ok(result);
     }
+
 }

@@ -8,10 +8,17 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
 @Component
 public class JwtTokenProvider {
 
     private final AppProperties appProperties;
+
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     public JwtTokenProvider(AppProperties appProperties) {
         this.appProperties = appProperties;
@@ -56,13 +63,14 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException ex) {
-            System.out.println("Invalid JWT token");
+            log.info("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            System.out.println("Expired JWT token");
+            log.info("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
-            System.out.println("Unsupported JWT token");
+            log.info("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            System.out.println("JWT claims string is empty");
+            log.info("JWT claims string is empty");
+
         }
         return false;
     }

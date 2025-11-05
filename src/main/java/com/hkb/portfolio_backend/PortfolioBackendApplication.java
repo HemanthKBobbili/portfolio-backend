@@ -9,12 +9,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+
 
 @SpringBootApplication
 @EnableAsync
 @EnableBatchProcessing
 @EnableConfigurationProperties(AppProperties.class)
 public class PortfolioBackendApplication {
+
+	private static final Logger log = LoggerFactory.getLogger(PortfolioBackendApplication.class);
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(PortfolioBackendApplication.class, args);
@@ -23,7 +31,8 @@ public class PortfolioBackendApplication {
 	@Bean
 	public CommandLineRunner demo(ProjectRepository repository){
 		return args -> {
-			System.out.println("Sample Projects in DB: " + repository.count());
+			log.info("Sample Projects in DB: {}", repository.count());
+
 		};
 	}
 
