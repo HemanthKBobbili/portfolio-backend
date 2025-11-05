@@ -13,3 +13,9 @@ A Java Spring Boot app with JWT auth, CRUD, WebSockets, and batch processing.
 - Inventory with file uploads
 - Real-time chat
 - Finance with batch CSV imports
+
+## ⚙️ Setup (Local Development)
+
+1. **Clone the repository**
+   ```bash
+   g
